@@ -4,3 +4,6 @@ nbbuild/
 dist/
 nbdist/
 .nb-gradle/
+
+[Tt]humbs.db
+*.DS_Store
