@@ -11,6 +11,10 @@ $db = 'tttexample';
 $dbconnect = new mysqli('localhost', $user, $pass, $db) or die ("unable to connect");
 
 
+$response = $client->showOpenGames();
+$result = $response->return;
+echo $result;
+
     if ($result = $dbconnect->query("SELECT * from games")) {
 
     echo "<table border=1>"; 
