@@ -1,11 +1,7 @@
 <?php
-
 session_start();
 $gameOwner = $_SESSION['userId'];
 include 'soapclient.php';
-include 'dbconnect.php';
-ini_set("default_socket_timeout", 500);
-
 $gameScreenUrl = "tictactoe.php";
 
 $params = array(
