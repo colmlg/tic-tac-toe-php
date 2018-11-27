@@ -39,7 +39,7 @@ else{
             }
             
             case ($result == 'ERROR-INSERT'):{
-                echo "Failed to inssert data";
+                echo "Failed to insert data";
                 break;  
                 }
             

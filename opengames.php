@@ -3,37 +3,22 @@
 session_start();
 $userId = $_SESSION['userId'];
 include 'soapclient.php';
+include 'dbconnect.php';
 ini_set("default_socket_timeout", 500);
-
-$user = 'root';
-$pass = '';
-$db = 'tttexample';
-$dbconnect = new mysqli('localhost', $user, $pass, $db) or die ("unable to connect");
-
 
 $response = $client->showOpenGames();
 $result = $response->return;
-echo $result;
-
-    if ($result = $dbconnect->query("SELECT * from games")) {
+$gameDetails = explode("\n", (string)$result);
 
     echo "<table border=1>"; 
-    echo "<th>Game Started Time</th><th>Game Creator</th><th>Join</th>";
-    
-    while($row = mysqli_fetch_array($result)){  
-        if(is_null($row['p2'])){
-            echo "<tr><td>" . $row['started'] . "<td>" . $row['autokey']. "</td>" . "</td> <td>"
+    echo "<th>Game Id</th><th>Game Creator</th><th>Started Time</th><th>Join</th>";
+    foreach ($gameDetails as $row){
+        $gameDetailsSplit = split(",", $row);
+        echo "<tr><td>" . $gameDetailsSplit[0] . "</td><td>" . $gameDetailsSplit[1] . "</td><td>" . $gameDetailsSplit[2] . "</td>" . "<td>"
                  . "<form id='games-form' action='joingame.php' method='get' role='form'>"
-                 . " <input name=id type=hidden value='".$row['autokey']."'>"
+                 . " <input name=id type=hidden value='". $gameDetailsSplit[0] . "'>"
                  . " <input type='submit' value='Join'> </form></td></tr>";
-
-        }
     }
-
     echo "</table>";
-    $result->close();
-}
-
-
 
 ?>
