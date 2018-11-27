@@ -5,9 +5,14 @@ $result = $response->return;
 $games = explode("\n", (string) $result);
 ?>
 
-<h4>Open Games (Awaiting second player)</h4>
-<table border=1>
-    <th>Game Id</th><th>Game Creator</th><th>Started Time</th><th>Join</th>
+<h4>Open Games <small>(Awaiting second player)</small></h4>
+<table class="table  table-striped">
+    <thead>
+        <th>Game Id</th>
+        <th>Game Creator</th>
+        <th>Started Time</th>
+        <th>Join</th>
+    </thead>
     <?php
     if ($result == "ERROR-NOGAMES" || $result == "ERROR-DB") {
         echo  "<tr><td>$result</td><td></td><td></td><td></td></tr>";
