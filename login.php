@@ -21,7 +21,7 @@ try {
     $referrer = $_SERVER['HTTP_REFERER']; 
     $response = $client->login($params);
     $userId = $response->return;
-
+    $_SESSION['username'] = $username;
     if ($userId == -1){
         invalidData("Incorrect login details - Returning to login screen", $referrer);
     }

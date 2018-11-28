@@ -26,9 +26,7 @@ try{
             break;
         }
         case 1:{
-            echo "You have joined an existing game - You will be redirected to the game screen shortly";
-            //echo "<input name=id type=hidden method =get value=" . $gameToJoinAutokey . ">";
-            header ("Refresh: 3;URL='$gameScreenUrl'"); 
+            header ("Refresh: 0;URL='$gameScreenUrl'"); 
             break;
         }
     }
