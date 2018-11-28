@@ -8,7 +8,6 @@
 {
 	border-collapse: collapse;
 }
-
 #tic-tac-toe td
 {
 	width: 30vmin;
@@ -17,51 +16,50 @@
 	border: 1px solid black;
 	color: transparent;
 }
-
 #tic-tac-toe .piece-x
 {
 	background-image: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%201%201%22%3E%3Cline%20x1%3D%220.1%22%20y1%3D%220.1%22%20x2%3D%220.9%22%20y2%3D%220.9%22%20stroke-width%3D%220.1%22%20stroke%3D%22red%22%2F%3E%3Cline%20x1%3D%220.1%22%20y1%3D%220.9%22%20x2%3D%220.9%22%20y2%3D%220.1%22%20stroke-width%3D%220.1%22%20stroke%3D%22red%22%2F%3E%3C%2Fsvg%3E');
 }
-
 #tic-tac-toe .piece-o
 {
 	background-image: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%201%201%22%3E%3Ccircle%20cx%3D%220.5%22%20cy%3D%220.5%22%20r%3D%220.4%22%20fill%3D%22none%22%20stroke-width%3D%220.1%22%20stroke%3D%22blue%22%2F%3E%3C%2Fsvg%3E');
 }
-
 #tic-tac-toe button
 {
 	display: block;
 	border: none;	
 	width: 100%;
 	height: 100%;
-	background: transparent;
-	color: transparent;
 	cursor: pointer;
+        
+        
 }
-
 #tic-tac-toe button::-moz-focus-inner
 {
 	border: none;
 }
-
 #tic-tac-toe button:focus
 {
 	background: silver;
 }
+
 </style>
 </head>
 
 <?php
 session_start();
+$output = "Game Started";
 $isMyTurn = checkTurn();
 $gameId = $_SESSION['gameId'];
 $userId = $_SESSION['userId'];
-
-
 if (!empty($_POST['cell'])){
     checkForInput();
 }
 
+function checkSelected(){
+    $square = $POST_['location'];
+    echo 'style="background-image: url(\'data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%201%201%22%3E%3Ccircle%20cx%3D%220.5%22%20cy%3D%220.5%22%20r%3D%220.4%22%20fill%3D%22none%22%20stroke-width%3D%220.1%22%20stroke%3D%22blue%22%2F%3E%3C%2Fsvg%3E\')"';
+}
 function checkForInput(){
     include 'soapclient.php'; 
     $cellCoords = split(",", $_POST['cell']);
@@ -76,7 +74,6 @@ function checkForInput(){
     );
     squareClicked($moveDetails);
 }
-
 function checkTurn(){
     include 'soapclient.php';
     $params = array(
@@ -87,8 +84,8 @@ function checkTurn(){
     $moves = explode("\n" ,(string)$result);
     $lastMove = explode(",", end($moves)[0].end($moves)[1]);
     $lastMovePlayerId = $lastMove[0];
-    
     if ($lastMovePlayerId == $_SESSION['userId']){
+        $GLOBALS['output'] = "It is not your turn\n";
         return false;
     }
     else{
@@ -102,7 +99,6 @@ function updateGameState($gid, $gstate){
         'gstate' => $gstate
     );
     $update = $client->setGameState($params);
-
 }
 function checkForWin(){
     include 'soapclient.php';
@@ -118,18 +114,21 @@ function checkForWin(){
             break;
         }
         case 1: {
-            $gameResult = "Player 1 has won";
+            $GLOBALS['output'] = "Player 1 has won. Game over - You will be redirected to the main menu";
             updateGameState($_SESSION['gameId'], 1);
+            header ("Refresh: 5;URL='menu.php'");
             break;
         }
         case 2: {
-            $gameResult = "Player 2 has won";
+            $GLOBALS['output'] = "Player 2 has won. Game over - You will be redirected to the main menu";
             updateGameState($_SESSION['gameId'], 2);
+            header ("Refresh: 5;URL='menu.php'");
             break;
         }
         case 3: {
-            $gameResult = "Game is a draw";
+            $GLOBALS['output'] = "Game is a draw. Game over - You will be redirected to the main menu";
             updateGameState($_SESSION['gameId'], 3);
+            header ("Refresh: 5;URL='menu.php'");
             break;
         }
         case "ERROR-RETRIEVE": {
@@ -142,7 +141,6 @@ function checkForWin(){
         }
     }
 }
-
 function updateGameBoard(){
     include 'soapclient.php'; 
     $params = array(
@@ -164,7 +162,6 @@ function updateGameBoard(){
     }
     checkForWin();
 }
-
 function squareClicked($moveDetails){
     include 'soapclient.php'; 
     if ($GLOBALS['isMyTurn'] == true){
@@ -173,24 +170,23 @@ function squareClicked($moveDetails){
         
         switch ($result){
             case 0: {
-                $result = "Problem adding square to table";
+                $GLOBALS['output'] = "Problem adding square to table";
                 break;
             }
             case 1: {
-                $result = "Success";
+                $GLOBALS['output'] = "Square Successfully Selected";
                 break;
             }
             case "ERROR-TAKEN": {
-                $result = "Square Taken";
+                $GLOBALS['output'] = "Square Taken";
                 break;
             }
             case "ERROR-DB": {
-                $result = "Failed to connect to db";
+                $GLOBALS['output'] = "Failed to connect to db";
                 break;
-
             }
             case "ERROR": {
-                $result = "Unknown error";
+                $GLOBALS['output'] = "Unknown error";
                 break;
             }
         }
@@ -252,77 +248,84 @@ function squareClicked($moveDetails){
 		</div>
 	</div>
 </div>
-<table id="tic-tac-toe">
-	<tbody>
-		<tr>
-                    
-                        <form method="POST" action="tictactoe.php">
-                            <td>
-                                    <input type="hidden" method="POST">
-                                    <button type="submit" name="cell" data-row="0" data-column="0" value="0,0"></button>
+<div style="padding-left: 930px; padding-bottom: 10px">
+<textarea rows="4" cols="50">
+<?php echo $GLOBALS['output'] ?>
+</textarea>
+</div>
+<div style="padding-left: 700px">
+    <table id="tic-tac-toe">
+            <tbody>
+                    <tr>
 
-                            </td>
-                        </form>
-                        <form method="POST" action="tictactoe.php">
-                            <td>
-                                    <input type="hidden" method="POST">
-                                    <button type="submit" name="cell" data-row="0" data-column="0" value="0,1"></button>
+                            <form method="POST" action="tictactoe.php">
+                                <td>
+                                        <input type="hidden" method="POST" value="00" id="location">
+                                        <button type="submit" name="cell" data-row="0" data-column="0" value="0,0"></button>
 
-                            </td>
-                        </form>
-                        <form method="POST" action="tictactoe.php">
-                            <td>
-                                    <input type="hidden" method="POST">
-                                    <button type="submit" name="cell" data-row="0" data-column="0" value="0,2"></button>
+                                </td>
+                            </form>
+                            <form method="POST" action="tictactoe.php">
+                                <td>
+                                        <input type="hidden" method="POST">
+                                        <button type="submit" name="cell" data-row="0" data-column="0" value="0,1"></button>
 
-                            </td>
-                        </form>
-		</tr>
-		<tr>
-                        <form method="POST" action="tictactoe.php">
-                            <td>
-                                    <input type="hidden" method="POST">
-                                    <button type="submit" name="cell" data-row="0" data-column="0" value="1,0"></button>
+                                </td>
+                            </form>
+                            <form method="POST" action="tictactoe.php">
+                                <td>
+                                        <input type="hidden" method="POST">
+                                        <button type="submit" name="cell" data-row="0" data-column="0" value="0,2"></button>
 
-                            </td>
-                        </form>
-                        <form method="POST" action="tictactoe.php">
-                            <td>
-                                    <input type="hidden" method="POST">
-                                    <button type="submit" name="cell" data-row="0" data-column="0" value="1,1"></button>
+                                </td>
+                            </form>
+                    </tr>
+                    <tr>
+                            <form method="POST" action="tictactoe.php">
+                                <td>
+                                        <input type="hidden" method="POST">
+                                        <button type="submit" name="cell" data-row="0" data-column="0" value="1,0"></button>
 
-                            </td>
-                        </form>
-                        <form method="POST" action="tictactoe.php">
-                            <td>
-                                    <input type="hidden" method="POST">
-                                    <button type="submit" name="cell" data-row="0" data-column="0" value="1,2"></button>
+                                </td>
+                            </form>
+                            <form method="POST" action="tictactoe.php">
+                                <td>
+                                        <input type="hidden" method="POST">
+                                        <button type="submit" name="cell" data-row="0" data-column="0" value="1,1"></button>
 
-                            </td>
-                        </form>
-		</tr>
-		<tr>
-                        <form method="POST" action="tictactoe.php">
-                            <td>
-                                    <input type="hidden" method="POST">
-                                    <button type="submit" name="cell" data-row="0" data-column="0" value="2,0"></button>
+                                </td>
+                            </form>
+                            <form method="POST" action="tictactoe.php">
+                                <td>
+                                        <input type="hidden" method="POST">
+                                        <button type="submit" name="cell" data-row="0" data-column="0" value="1,2"></button>
 
-                            </td>
-                        </form>
-                        <form method="POST" action="tictactoe.php">
-                            <td>
-                                    <input type="hidden" method="POST">
-                                    <button type="submit" name="cell" data-row="0" data-column="0" value="2,1"></button>
+                                </td>
+                            </form>
+                    </tr>
+                    <tr>
+                            <form method="POST" action="tictactoe.php">
+                                <td>
+                                        <input type="hidden" method="POST">
+                                        <button type="submit" name="cell" data-row="0" data-column="0" value="2,0"></button>
 
-                            </td>
-                        </form>
-                        <form method="POST" action="tictactoe.php">
-                            <td>
-                                    <input type="hidden" method="POST">
-                                    <button type="submit" name="cell" data-row="0" data-column="0" value="2,2"></button>
+                                </td>
+                            </form>
+                            <form method="POST" action="tictactoe.php">
+                                <td>
+                                        <input type="hidden" method="POST">
+                                        <button type="submit" name="cell" data-row="0" data-column="0" value="2,1"></button>
 
-                            </td>
-                        </form>
-		</tr>
-	</tbody>
-</table>
+                                </td>
+                            </form>
+                            <form method="POST" action="tictactoe.php">
+                                <td>
+                                        <input type="hidden" method="POST">
+                                        <button type="submit" name="cell" data-row="0" data-column="0" value="2,2"></button>
+
+                                </td>
+                            </form>
+                    </tr>
+            </tbody>
+    </table>
+</div>
