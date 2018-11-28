@@ -61,6 +61,5 @@ include 'dbconnect.php';
 </div>
 <?php
 $currentUser = $_SESSION['userId'];
-echo $currentUser;
 ?>
 
