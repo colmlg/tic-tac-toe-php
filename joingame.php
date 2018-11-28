@@ -5,8 +5,6 @@ $userId = $_SESSION['userId'];
 $gameToJoinAutokey = $_GET['id'];
 $_SESSION['gameId'] = $gameToJoinAutokey;
 include 'soapclient.php';
-include 'dbconnect.php';
-ini_set("default_socket_timeout", 500);
 
 $gameScreenUrl = "tictactoe.php";
 $params = array(
